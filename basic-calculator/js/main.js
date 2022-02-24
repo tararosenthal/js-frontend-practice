@@ -1,11 +1,10 @@
 let storedOperation = "";
 let storedValue = "";
 let displayValue = 0;
-const buttonArray = document.getElementsByClassName("button");
 
-addEventListeners(buttonArray);
+(function () {
+    const buttonArray = document.getElementsByClassName("button");
 
-function addEventListeners(buttonArray) {
     Array.from(buttonArray).forEach(element => {
         if (!isClass(element, "operation")) {
             element.addEventListener('click' , buildDisplayValue , false );
@@ -13,7 +12,7 @@ function addEventListeners(buttonArray) {
             element.addEventListener('click' , calculateAnswer , false );
         }
     });
-}
+})();
 
 function calculateAnswer() {
     let clickInnerText = this.innerText;
@@ -55,13 +54,13 @@ function buildDisplayValue() {
     if (plusOrMinus) {
         if (String(displayValue).charAt(0) === "-") {
             displayValue = String(displayValue).slice(1);
-        } else if (displayValue === 0) {
-            displayValue = "-";
-        } else {
+        } else if (displayValue != 0) {
             displayValue = "-" + displayValue;
+        } else {
+            
         }
     } else {
-        if (displayValue === 0) {
+        if (displayValue == 0) {
             displayValue = clickInnerText;
         } else {
             displayValue += clickInnerText;
@@ -77,21 +76,21 @@ function calculateSum(string) {
 
     switch(string) {
         case "+" :
-            displayValueAsFloat += storedValueAsFloat;
+            storedValueAsFloat += displayValueAsFloat;
             break;
         case "-" :
-            displayValueAsFloat -= storedValueAsFloat;
+            storedValueAsFloat -= displayValueAsFloat;
             break;
         case "*" :
-            displayValueAsFloat *= storedValueAsFloat;
+            storedValueAsFloat *= displayValueAsFloat;
             break;
         case "/" :
-            displayValueAsFloat = storedValueAsFloat / displayValueAsFloat;
+            storedValueAsFloat /= displayValueAsFloat;
             break;
         default :
-            break;                
+            return roundToFour(displayValueAsFloat);                
     }
-    return roundToFour(displayValueAsFloat);
+    return roundToFour(storedValueAsFloat);
 }
 
 function roundToFour(num) { 
