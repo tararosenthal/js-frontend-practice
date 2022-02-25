@@ -1,6 +1,6 @@
 let storedOperation = "";
 let storedValue = "";
-let displayValue = 0;
+let displayValue = "0";
 
 (function () {
     const buttonArray = document.getElementsByClassName("button");
@@ -20,20 +20,21 @@ function calculateAnswer() {
     let clear = isClass(this, 'clear');
     
     if (clear) {
+        storedOperation = "";
         storedValue = "";
-        displayValue = 0;
+        displayValue = "0";
         updateDisplay(displayValue);
     } else {
         if (storedValue !== "") {
             displayValue = calculateSum(storedOperation);
-            storedOperation = clickInnerText;
             updateDisplay(displayValue);
-        } else {
-            storedOperation = clickInnerText;
-        }
+        } 
+
+        storedOperation = clickInnerText;
+
         if (!equals) {
             storedValue = displayValue;
-            displayValue = 0;
+            displayValue = "0";
         } else {
             storedValue = "";
         }
@@ -43,31 +44,37 @@ function calculateAnswer() {
 
 function buildDisplayValue() {
     let plusOrMinus = isClass(this, 'plus-or-minus');
+    let decimalPoint = isClass(this, 'decimal-point');
     let clickInnerText = this.innerText;
 
     if (storedOperation === "=" && !plusOrMinus) {
         storedValue = displayValue;
-        displayValue = 0;
+        displayValue = "0";
         storedOperation = "";
     }
 
-    if (plusOrMinus) {
-        if (String(displayValue).charAt(0) === "-") {
-            displayValue = String(displayValue).slice(1);
-        } else if (displayValue != 0) {
-            displayValue = "-" + displayValue;
+    if (displayValue.length < 7) {
+        if (plusOrMinus) {
+            if (String(displayValue).charAt(0) === "-") {
+                displayValue = String(displayValue).slice(1);
+            } else if (displayValue != "0") {
+                displayValue = "-" + displayValue;
+            }
         } else {
-            
-        }
-    } else {
-        if (displayValue == 0) {
-            displayValue = clickInnerText;
-        } else {
-            displayValue += clickInnerText;
+            if (displayValue == "0") {
+                if (!decimalPoint) {
+                    displayValue = clickInnerText;
+                } else {
+                    displayValue = "0.";
+                }
+            } else {
+                if (!decimalPoint || !String(displayValue).includes(".")) {
+                    displayValue += clickInnerText;
+                }
+            }
         }
     }
-    
-    updateDisplay(roundToFour(displayValue));
+    updateDisplay(displayValue);
 }
 
 function calculateSum(string) {
@@ -94,6 +101,7 @@ function calculateSum(string) {
 }
 
 function roundToFour(num) { 
+    //limit to 7 chars
     if (isNaN(num)) {
         return num;
     }   

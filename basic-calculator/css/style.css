@@ -59,8 +59,7 @@ ul {
 
 .button.plus-or-minus {
   font-size: 1.3rem;
-  padding-top: 2.55rem;
-  padding-bottom: 2.55rem;
+  padding: 2.55rem 1.01rem;
 }
 
 .operations {
