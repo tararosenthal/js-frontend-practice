@@ -1,5 +1,6 @@
-let storedOperation = "";
-let storedValue = "";
+let empty = "";
+let storedOperation = empty;
+let storedValue = empty;
 let displayValue = "0";
 
 (function () {
@@ -7,54 +8,39 @@ let displayValue = "0";
 
     Array.from(buttonArray).forEach(element => {
         if (!isClass(element, "operation")) {
-            element.addEventListener('click' , buildDisplayValue , false );
+            element.addEventListener("click", buildDisplayValue);
         } else {
-            element.addEventListener('click' , calculateAnswer , false );
+            element.addEventListener("click", processOperation);
         }
     });
 })();
 
-function calculateAnswer() {
-    let clickInnerText = this.innerText;
-    let equals = isClass(this, 'equals');
-    let clear = isClass(this, 'clear');
+function processOperation() {
+    let clickedOperation = this.innerText;
+    let clickedClearOperation = isClass(this, "clear");
     
-    if (clear) {
-        storedOperation = "";
-        storedValue = "";
-        displayValue = "0";
-        updateDisplay(displayValue);
+    if (clickedClearOperation) {
+        clearCalculator();
     } else {
-        if (storedValue !== "") {
-            displayValue = calculateSum(storedOperation);
-            updateDisplay(displayValue);
-        } 
-
-        storedOperation = clickInnerText;
-
-        if (!equals) {
-            storedValue = displayValue;
-            displayValue = "0";
-        } else {
-            storedValue = "";
+        if (storedValue !== empty) {
+            solveEquationWithStoredValueAndDisplayValueUsingStoredOperation(storedOperation);
         }
-    } 
-        
+        storeDisplayValueAndClickedOperation(clickedOperation);
+    }
 }
 
 function buildDisplayValue() {
-    let plusOrMinus = isClass(this, 'plus-or-minus');
-    let decimalPoint = isClass(this, 'decimal-point');
-    let clickInnerText = this.innerText;
+    let clickedPlusOrMinus = isClass(this, "plus-or-minus");
+    let clickedDecimalPoint = isClass(this, "decimal-point");
+    let clickedValue = this.innerText;
 
-    if (storedOperation === "=" && !plusOrMinus) {
-        storedValue = displayValue;
-        displayValue = "0";
-        storedOperation = "";
+    if (storedOperation === "=" && !clickedPlusOrMinus) {
+        storeDisplayValue();
+        storedOperation = empty;
     }
 
     if (displayValue.length < 7) {
-        if (plusOrMinus) {
+        if (clickedPlusOrMinus) {
             if (String(displayValue).charAt(0) === "-") {
                 displayValue = String(displayValue).slice(1);
             } else if (displayValue != "0") {
@@ -62,14 +48,14 @@ function buildDisplayValue() {
             }
         } else {
             if (displayValue == "0") {
-                if (!decimalPoint) {
-                    displayValue = clickInnerText;
+                if (!clickedDecimalPoint) {
+                    displayValue = clickedValue;
                 } else {
                     displayValue = "0.";
                 }
             } else {
-                if (!decimalPoint || !String(displayValue).includes(".")) {
-                    displayValue += clickInnerText;
+                if (!clickedDecimalPoint|| !String(displayValue).includes(".")) {
+                    displayValue += clickedValue;
                 }
             }
         }
@@ -77,11 +63,11 @@ function buildDisplayValue() {
     updateDisplay(displayValue);
 }
 
-function calculateSum(string) {
+function solveEquationWithStoredValueAndDisplayValueUsingStoredOperation(storedOperation) {
     let displayValueAsFloat = parseFloat(displayValue);
     let storedValueAsFloat = parseFloat(storedValue);
 
-    switch(string) {
+    switch(storedOperation) {
         case "+" :
             storedValueAsFloat += displayValueAsFloat;
             break;
@@ -97,15 +83,41 @@ function calculateSum(string) {
         default :
             return roundToFour(displayValueAsFloat);                
     }
-    return roundToFour(storedValueAsFloat);
+
+    displayValue = roundToFourDecimals(storedValueAsFloat);
+    updateDisplay(displayValue);
 }
 
-function roundToFour(num) { 
-    //limit to 7 chars
+function roundToFourDecimals(num) { 
+    //limit to 7 chars?
     if (isNaN(num)) {
         return num;
     }   
     return +(Math.round(num + "e+4")  + "e-4");
+}
+
+function clearCalculator() {
+    storedOperation = empty;
+    storedValue = empty;
+    displayValue = "0";
+    updateDisplay(displayValue);
+}
+
+function storeDisplayValueAndClickedOperation(clickedOperation) {
+    let equalsOperation = "=";
+
+    storedOperation = clickedOperation;
+
+    if (clickedOperation != equalsOperation) {
+        storeDisplayValue();
+    } else {
+        storedValue = empty;
+    }
+}
+
+function storeDisplayValue() {
+    storedValue = displayValue;
+    displayValue = "0";
 }
 
 function isClass(element, string) {
