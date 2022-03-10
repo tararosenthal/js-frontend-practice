@@ -1,5 +1,5 @@
 let empty = "";
-let storedOperation = empty;
+let storedOperator = empty;
 let storedValue = empty;
 let displayValue = "0";
 
@@ -7,25 +7,25 @@ let displayValue = "0";
     const buttonArray = document.getElementsByClassName("button");
 
     Array.from(buttonArray).forEach(element => {
-        if (!isClass(element, "operation")) {
+        if (!isClass(element, "operator")) {
             element.addEventListener("click", buildDisplayValue);
         } else {
-            element.addEventListener("click", processOperation);
+            element.addEventListener("click", processOperator);
         }
     });
 })();
 
-function processOperation() {
-    let clickedOperation = this.innerText;
-    let clickedClearOperation = isClass(this, "clear");
+function processOperator() {
+    let clickedOperator = this.innerText;
+    let clickedClearOperator = isClass(this, "clear");
     
-    if (clickedClearOperation) {
+    if (clickedClearOperator) {
         clearCalculator();
     } else {
         if (storedValue !== empty) {
-            solveEquationWithStoredValueAndDisplayValueUsingStoredOperation(storedOperation);
+            solveExpressionWithStoredValueAndDisplayValueUsingStoredOperator(storedOperator);
         }
-        storeDisplayValueAndClickedOperation(clickedOperation);
+        storeDisplayValueAndClickedOperator(clickedOperator);
     }
 }
 
@@ -34,9 +34,9 @@ function buildDisplayValue() {
     let clickedDecimalPoint = isClass(this, "decimal-point");
     let clickedValue = this.innerText;
 
-    if (storedOperation === "=" && !clickedPlusOrMinus) {
+    if (storedOperator === "=" && !clickedPlusOrMinus) {
         storeDisplayValue();
-        storedOperation = empty;
+        storedOperator = empty;
     }
 
     if (displayValue.length < 7) {
@@ -63,11 +63,11 @@ function buildDisplayValue() {
     updateDisplay(displayValue);
 }
 
-function solveEquationWithStoredValueAndDisplayValueUsingStoredOperation(storedOperation) {
+function solveExpressionWithStoredValueAndDisplayValueUsingStoredOperator(storedOperator) {
     let displayValueAsFloat = parseFloat(displayValue);
     let storedValueAsFloat = parseFloat(storedValue);
 
-    switch(storedOperation) {
+    switch(storedOperator) {
         case "+" :
             storedValueAsFloat += displayValueAsFloat;
             break;
@@ -97,18 +97,18 @@ function roundToFourDecimals(num) {
 }
 
 function clearCalculator() {
-    storedOperation = empty;
+    storedOperator = empty;
     storedValue = empty;
     displayValue = "0";
     updateDisplay(displayValue);
 }
 
-function storeDisplayValueAndClickedOperation(clickedOperation) {
-    let equalsOperation = "=";
+function storeDisplayValueAndClickedOperator(clickedOperator) {
+    let equalsOperator = "=";
 
-    storedOperation = clickedOperation;
+    storedOperator = clickedOperator;
 
-    if (clickedOperation != equalsOperation) {
+    if (clickedOperator != equalsOperator) {
         storeDisplayValue();
     } else {
         storedValue = empty;

@@ -62,12 +62,12 @@ ul {
   padding: 2.55rem 1.01rem;
 }
 
-.operations {
+.operators {
   flex-direction: column;
 }
 
 .numbers > *,
-.operations > * {
+.operators > * {
   padding: 1rem;
   flex-grow: 1;
   text-align: center;
@@ -75,7 +75,7 @@ ul {
   border-top: 2.5px solid black;
 }
 
-.operations > * {
+.operators > * {
   border-right: 2.5px solid black;
 }
  
