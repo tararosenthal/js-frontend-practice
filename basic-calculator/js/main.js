@@ -2,6 +2,7 @@ let empty = "";
 let storedOperator = empty;
 let storedValue = empty;
 let displayValue = "0";
+const MAX_DISPLAY_INPUT_LENGTH = 7;
 
 (function () {
     const buttonArray = document.getElementsByClassName("button");
@@ -18,7 +19,7 @@ let displayValue = "0";
 function processOperator() {
     let clickedOperator = this.innerText;
     let clickedClearOperator = isClass(this, "clear");
-    
+
     if (clickedClearOperator) {
         clearCalculator();
     } else {
@@ -32,32 +33,18 @@ function processOperator() {
 function buildDisplayValue() {
     let clickedPlusOrMinus = isClass(this, "plus-or-minus");
     let clickedDecimalPoint = isClass(this, "decimal-point");
+    let clickedEquals = isClass(this, "equals");
     let clickedValue = this.innerText;
 
-    if (storedOperator === "=" && !clickedPlusOrMinus) {
-        storeDisplayValue();
-        storedOperator = empty;
+    if (clickedEquals && !clickedPlusOrMinus) {
+        getReadyForNextExpression();
     }
 
-    if (displayValue.length < 7) {
+    if (displayValue.length < MAX_DISPLAY_INPUT_LENGTH) {
         if (clickedPlusOrMinus) {
-            if (String(displayValue).charAt(0) === "-") {
-                displayValue = String(displayValue).slice(1);
-            } else if (displayValue != "0") {
-                displayValue = "-" + displayValue;
-            }
+            processPlusOrMinus();
         } else {
-            if (displayValue == "0") {
-                if (!clickedDecimalPoint) {
-                    displayValue = clickedValue;
-                } else {
-                    displayValue = "0.";
-                }
-            } else {
-                if (!clickedDecimalPoint|| !String(displayValue).includes(".")) {
-                    displayValue += clickedValue;
-                }
-            }
+            processInputValue(clickedDecimalPoint, clickedValue);
         }
     }
     updateDisplay(displayValue);
@@ -81,18 +68,17 @@ function solveExpressionWithStoredValueAndDisplayValueUsingStoredOperator(stored
             storedValueAsFloat /= displayValueAsFloat;
             break;
         default :
-            return roundToFour(displayValueAsFloat);                
+            return roundToFour(displayValueAsFloat);
     }
 
     displayValue = roundToFourDecimals(storedValueAsFloat);
     updateDisplay(displayValue);
 }
 
-function roundToFourDecimals(num) { 
-    //limit to 7 chars?
+function roundToFourDecimals(num) {
     if (isNaN(num)) {
         return num;
-    }   
+    }
     return +(Math.round(num + "e+4")  + "e-4");
 }
 
@@ -112,6 +98,33 @@ function storeDisplayValueAndClickedOperator(clickedOperator) {
         storeDisplayValue();
     } else {
         storedValue = empty;
+    }
+}
+
+function getReadyForNextExpression() {
+    storeDisplayValue();
+    storedOperator = empty;
+}
+
+function processPlusOrMinus() {
+    if (String(displayValue).charAt(0) === "-") {
+        displayValue = String(displayValue).slice(1);
+    } else if (displayValue != "0") {
+        displayValue = "-" + displayValue;
+    }
+}
+
+function processInputValue(clickedDecimalPoint, clickedValue) {
+    if (displayValue == "0") {
+        if (!clickedDecimalPoint) {
+            displayValue = clickedValue;
+        } else {
+            displayValue = "0.";
+        }
+    } else {
+        if (!clickedDecimalPoint|| !String(displayValue).includes(".")) {
+            displayValue += clickedValue;
+        }
     }
 }
 
